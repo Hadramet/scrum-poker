@@ -1,15 +1,9 @@
 import * as React from 'react';
-import {
-    Typography,
-    Button, Dialog,
-    DialogTitle, DialogContent,
-    DialogContentText, TextField,
-    DialogActions,
-    Stack
-} from '@mui/material';
+import * as material from '@mui/material';
 import { useCookies } from 'react-cookie';
 import { Box } from '@mui/system';
 import { randomBytes } from 'crypto';
+import { useNavigate } from 'react-router-dom';
 
 
 export function Home(props) {
@@ -18,6 +12,7 @@ export function Home(props) {
     const [form, setForm] = React.useState({ name: "" })
     const [room, setRoom] = React.useState({ room_number: "" })
     const [cookies, setCookie] = useCookies()
+    let navigate = useNavigate();
 
     const setUserId = () => {
         cookies.user ?? setCookie('user', randomBytes(16).toString("hex"))
@@ -37,15 +32,17 @@ export function Home(props) {
         });
     }
 
-    function  handleEnterRoom(event) {
+    async function handleEnterRoom(event) {
         event.preventDefault()
         // TODO api call to check if room exist
         console.log({
             type: 'enter_room',
             room_number: room.room_number
-        });        
+        });
 
         // TODO go to the page enter room
+        navigate(`/room/${room.room_number}`)
+
     }
 
     function handleClose() {
@@ -80,32 +77,35 @@ export function Home(props) {
 
         <div>
             <Box {...props}>
-                <Typography component="h1" variant="h5">
+                <material.Typography component="div" variant="h2">
+                    Set up your planning poker
+                </material.Typography>
+                <material.Typography component="div" variant="h5">
                     Create your planning room and invite others with a single click
                     {setUserId()}
-                </Typography>
+                </material.Typography>
 
-                <Button
+                <material.Button
                     fullWidth
                     onClick={handleOpen}
                     variant="outlined"
                     sx={{ mt: 3, mb: 2 }}
                 >
                     CREATE ROOM
-                </Button>
+                </material.Button>
 
-                <Dialog
+                <material.Dialog
                     open={open}
                     onClose={handleClose}
                     fullWidth={true}
                     maxWidth='sm' >
-                    <DialogTitle> Create your room </DialogTitle>
-                    <DialogContent>
-                        <DialogContentText>
+                    <material.DialogTitle> Create your room </material.DialogTitle>
+                    <material.DialogContent>
+                        <material.DialogContentText>
                             All we need is a display name.
-                        </DialogContentText>
+                        </material.DialogContentText>
                         <form component={form} onSubmit={handleSubmit}>
-                            <TextField
+                            <material.TextField
                                 autoFocus
                                 margin="dense"
                                 id="name"
@@ -116,29 +116,29 @@ export function Home(props) {
                                 fullWidth
                                 variant="standard" />
 
-                            <DialogActions>
-                                <Button onClick={handleClose}>CANCEL</Button>
-                                <Button type='submit' >CREATE ROOM</Button>
-                            </DialogActions>
+                            <material.DialogActions>
+                                <material.Button onClick={handleClose}>CANCEL</material.Button>
+                                <material.Button type='submit' >CREATE ROOM</material.Button>
+                            </material.DialogActions>
                         </form>
-                    </DialogContent>
+                    </material.DialogContent>
 
 
-                </Dialog>
+                </material.Dialog>
                 &nbsp;
 
                 {/* TODO : Join room */}
             </Box>
 
-            <Typography variant="h5" gutterBottom component="h1">
+            <material.Typography variant="h5" gutterBottom component="h1">
                 Join a Room
-            </Typography>
+            </material.Typography>
             <Box sx={{ mt: 3, mb: 2 }}
             >
-                <Stack direction="row" spacing={2}>
-                    <TextField  name="room_number" label="Room number" onChange={handleRoomNumberChange} fullWidth />
-                    <Button fullWidth sx={{ maxWidth: 80, }} onClick={handleEnterRoom} variant="contained">Enter</Button>
-                </Stack>
+                <material.Stack direction="row" spacing={2}>
+                    <material.TextField name="room_number" label="Room number" onChange={handleRoomNumberChange} fullWidth />
+                    <material.Button fullWidth sx={{ maxWidth: 80, }} onClick={handleEnterRoom} variant="contained">Enter</material.Button>
+                </material.Stack>
             </Box>
         </div>
     );
